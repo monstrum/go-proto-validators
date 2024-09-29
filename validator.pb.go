@@ -3,6 +3,8 @@
 package validator
 
 import (
+	"github.com/gogo/protobuf/proto"
+	"github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	descriptorpb "google.golang.org/protobuf/types/descriptorpb"
@@ -287,6 +289,24 @@ func (x *OneofValidator) GetRequired() bool {
 	return false
 }
 
+var Gogo_E_Field = &proto.ExtensionDesc{
+	ExtendedType:  (*descriptor.FieldOptions)(nil),
+	ExtensionType: (*FieldValidator)(nil),
+	Field:         65030,
+	Name:          "validator.field",
+	Tag:           "bytes,65030,opt,name=field",
+	Filename:      "validator.proto",
+}
+
+var Gogo_E_Oneof = &proto.ExtensionDesc{
+	ExtendedType:  (*descriptor.OneofOptions)(nil),
+	ExtensionType: (*OneofValidator)(nil),
+	Field:         65031,
+	Name:          "validator.oneof",
+	Tag:           "bytes,65031,opt,name=oneof",
+	Filename:      "validator.proto",
+}
+
 var file_validator_proto_extTypes = []protoimpl.ExtensionInfo{
 	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
@@ -413,7 +433,13 @@ var file_validator_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_validator_proto_init() }
+func init() {
+	file_validator_proto_init()
+	proto.RegisterType((*FieldValidator)(nil), "validator.FieldValidator")
+	proto.RegisterType((*OneofValidator)(nil), "validator.OneofValidator")
+	proto.RegisterExtension(Gogo_E_Field)
+	proto.RegisterExtension(Gogo_E_Oneof)
+}
 func file_validator_proto_init() {
 	if File_validator_proto != nil {
 		return

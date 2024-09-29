@@ -109,7 +109,14 @@ func (p *plugin) Generate(file *generator.FileDescriptor) {
 
 func getFieldValidatorIfAny(field *descriptor.FieldDescriptorProto) *validator.FieldValidator {
 	if field.Options != nil {
-		v, err := proto.GetExtension(field.Options, validator.E_Field)
+		v, err := proto.GetExtension(field.Options, &proto.ExtensionDesc{
+			ExtendedType:  validator.E_Field.ExtendedType,
+			ExtensionType: validator.E_Field.ExtensionType,
+			Field:         validator.E_Field.Field,
+			Name:          validator.E_Field.Name,
+			Tag:           validator.E_Field.Tag,
+			Filename:      validator.E_Field.Filename,
+		})
 		if err == nil && v.(*validator.FieldValidator) != nil {
 			return v.(*validator.FieldValidator)
 		}
@@ -119,7 +126,14 @@ func getFieldValidatorIfAny(field *descriptor.FieldDescriptorProto) *validator.F
 
 func getOneOfValidatorIfAny(oneOf *descriptor.OneofDescriptorProto) *validator.OneofValidator {
 	if oneOf.Options != nil {
-		v, err := proto.GetExtension(oneOf.Options, validator.E_Oneof)
+		v, err := proto.GetExtension(oneOf.Options, &proto.ExtensionDesc{
+			ExtendedType:  validator.E_Oneof.ExtendedType,
+			ExtensionType: validator.E_Oneof.ExtensionType,
+			Field:         validator.E_Oneof.Field,
+			Name:          validator.E_Oneof.Name,
+			Tag:           validator.E_Oneof.Tag,
+			Filename:      validator.E_Oneof.Filename,
+		})
 		if err == nil && v.(*validator.OneofValidator) != nil {
 			return v.(*validator.OneofValidator)
 		}
@@ -258,6 +272,8 @@ func (p *plugin) generateProto2ValidateFunctions(file *generator.FileDescriptor,
 			p.generateFloatValidator(variableName, ccTypeName, fieldName, fieldValidator, assignInsteadReturn)
 		} else if field.IsBytes() {
 			p.generateLengthValidator(variableName, ccTypeName, fieldName, fieldValidator, assignInsteadReturn)
+		} else if field.IsRequired() {
+			p.generateRequiredValidator(variableName, ccTypeName, fieldName, fieldValidator, assignInsteadReturn)
 		} else if field.IsMessage() {
 			if repeated && nullable {
 				variableName = "*(item)"
@@ -430,6 +446,8 @@ func (p *plugin) generateValidateFunctions(file *generator.FileDescriptor, messa
 			p.generateFloatValidator(variableName, ccTypeName, fieldName, fieldValidator, assignInsteadReturn)
 		} else if field.IsBytes() {
 			p.generateLengthValidator(variableName, ccTypeName, fieldName, fieldValidator, assignInsteadReturn)
+		} else if field.IsRequired() {
+			p.generateRequiredValidator(variableName, ccTypeName, fieldName, fieldValidator, assignInsteadReturn)
 		} else if field.IsMessage() {
 			if p.validatorWithMessageExists(fieldValidator) {
 				if nullable && !repeated {
@@ -544,6 +562,17 @@ func (p *plugin) generateLengthValidator(variableName string, _ string, fieldNam
 		p.In()
 		errorStr := fmt.Sprintf(`have a length equal to '%d'`, fv.GetLengthEq())
 		p.generateErrorString(variableName, fieldName, "length_eq", errorStr, fv, assignInsteadReturn)
+		p.Out()
+		p.P(`}`)
+	}
+}
+
+func (p *plugin) generateRequiredValidator(variableName string, ccTypeName string, fieldName string, fv *validator.FieldValidator, assignInsteadReturn bool) {
+	if fv.Required != nil && *fv.Required == true {
+		p.P(`if nil == `, variableName, ` {`)
+		p.In()
+		errorStr := fmt.Sprintf(`%s is required`, fieldName)
+		p.generateErrorString(variableName, fieldName, "required", errorStr, fv, assignInsteadReturn)
 		p.Out()
 		p.P(`}`)
 	}
