@@ -267,18 +267,18 @@ func (m *OneofValidator) GetRequired() bool {
 var E_Field = &proto.ExtensionDesc{
 	ExtendedType:  (*descriptor.FieldOptions)(nil),
 	ExtensionType: (*FieldValidator)(nil),
-	Field:         65020,
+	Field:         65030,
 	Name:          "validator.field",
-	Tag:           "bytes,65020,opt,name=field",
+	Tag:           "bytes,65030,opt,name=field",
 	Filename:      "validator.proto",
 }
 
 var E_Oneof = &proto.ExtensionDesc{
 	ExtendedType:  (*descriptor.OneofOptions)(nil),
 	ExtensionType: (*OneofValidator)(nil),
-	Field:         65021,
+	Field:         65031,
 	Name:          "validator.oneof",
-	Tag:           "bytes,65021,opt,name=oneof",
+	Tag:           "bytes,65031,opt,name=oneof",
 	Filename:      "validator.proto",
 }
 
