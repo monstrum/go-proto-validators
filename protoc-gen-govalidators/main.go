@@ -11,7 +11,7 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
-	validator_plugin "github.com/mwitkow/go-proto-validators/plugin"
+	validatorplugin "github.com/monstrum/go-proto-validators/plugin"
 )
 
 func main() {
@@ -49,7 +49,7 @@ func main() {
 	gen.WrapTypes()
 	gen.SetPackageNames()
 	gen.BuildTypeNameMap()
-	gen.GeneratePlugin(validator_plugin.NewPlugin(useGogoImport))
+	gen.GeneratePlugin(validatorplugin.NewPlugin(useGogoImport))
 
 	for i := 0; i < len(gen.Response.File); i++ {
 		gen.Response.File[i].Name = proto.String(strings.Replace(*gen.Response.File[i].Name, ".pb.go", ".validator.pb.go", -1))
